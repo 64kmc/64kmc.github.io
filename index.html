@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>64kmc Submissions</title>
+    <link href="https://fonts.cdnfonts.com/css/algerian" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
+            color: #000000;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #000000;
+                color: #ffffff;
+            }
+        }
+        
+        .selection-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .selection-screen h1 {
+            font-size: 5em;
+            font-family: 'Algerian', sans-serif;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 80px;
+            color: #f97316;
+            animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+        }
+        
+        .button-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .role-btn {
+            padding: 20px 60px;
+            font-size: 1.6em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .role-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .role-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .role-btn:hover {
+            background: #ea580c;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 40px rgba(249, 115, 22, 0.5);
+        }
+        
+        .role-btn:active {
+            transform: translateY(-2px) scale(1.02);
+            transition: all 0.1s ease;
+        }
+        
+        .role-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .dev-btn {
+            animation: slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+        }
+        
+        .helper-btn {
+            animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+        }
+        
+        .typing-text {
+            font-size: 1.8em;
+            font-weight: 500;
+            color: #f97316;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            border-right: 3px solid #f97316;
+            white-space: nowrap;
+            animation: typing 3s steps(16, end) 1.2s 1 normal both, blink 0.75s step-end infinite;
+            letter-spacing: 2px;
+            display: inline-block;
+        }
+        
+        .admin-btn {
+            margin-top: 40px;
+            padding: 14px 35px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: transparent;
+            color: #ef4444;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .admin-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #ef4444;
+            transition: left 0.4s ease;
+            z-index: 0;
+        }
+        
+        .admin-btn:hover::before {
+            left: 0;
+        }
+        
+        .admin-btn:hover {
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .admin-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+            animation: slideUpFade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: #111111;
+                box-shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
+            }
+        }
+        
+        .container.active {
+            display: block;
+        }
+        
+        h1 {
+            color: #f97316;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-family: 'Algerian', sans-serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeInDown 0.6s ease;
+        }
+        
+        .back-btn {
+            background: transparent;
+            color: #f97316;
+            border: 2px solid #f97316;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-transform: uppercase;
+        }
+        
+        .back-btn:hover {
+            background: #f97316;
+            color: #ffffff;
+            transform: translateX(-3px);
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            animation: fadeInUp 0.5s ease backwards;
+        }
+        
+        .question:nth-child(1) { animation-delay: 0.05s; }
+        .question:nth-child(2) { animation-delay: 0.1s; }
+        .question:nth-child(3) { animation-delay: 0.15s; }
+        .question:nth-child(4) { animation-delay: 0.2s; }
+        .question:nth-child(5) { animation-delay: 0.25s; }
+        .question:nth-child(6) { animation-delay: 0.3s; }
+        .question:nth-child(7) { animation-delay: 0.35s; }
+        .question:nth-child(8) { animation-delay: 0.4s; }
+        .question:nth-child(9) { animation-delay: 0.45s; }
+        .question:nth-child(10) { animation-delay: 0.5s; }
+        .question:nth-child(11) { animation-delay: 0.55s; }
+        
+        label {
+            display: block;
+            color: #666666;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 1em;
+            transition: color 0.3s ease;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            label {
+                color: #999999;
+            }
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            input[type="text"],
+            input[type="email"],
+            textarea,
+            select {
+                background: #1a1a1a;
+                color: #ffffff;
+                border-color: #333333;
+            }
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        select option {
+            background: #ffffff;
+            color: #000000;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            select option {
+                background: #1a1a1a;
+                color: #ffffff;
+            }
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            transition: right 0.4s ease;
+        }
+        
+        .submit-btn:hover::after {
+            right: 20px;
+        }
+        
+        .submit-btn:hover {
+            background: #ea580c;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(-1px) scale(1);
+        }
+        
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #f97316;
+            color: #ffffff;
+            padding: 40px 60px;
+            border-radius: 16px;
+            font-size: 1.8em;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(249, 115, 22, 0.5);
+            z-index: 9999;
+            opacity: 0;
+            animation: successPop 3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        
+        .admin-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 60px 40px;
+            position: relative;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .admin-screen.active {
+            display: flex;
+        }
+        
+        .admin-screen h1 {
+            font-size: 3.5em;
+            margin-bottom: 60px;
+            color: #f97316;
+            animation: fadeInDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .admin-options {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .admin-option-btn {
+            padding: 22px 45px;
+            font-size: 1.4em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease backwards;
+        }
+        
+        .admin-option-btn:nth-child(1) { animation-delay: 0.1s; }
+        .admin-option-btn:nth-child(2) { animation-delay: 0.2s; }
+        
+        .admin-option-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .admin-option-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+        
+        .admin-option-btn:hover {
+            background: #ea580c;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+        }
+        
+        .admin-option-btn span {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .corner-back-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: transparent;
+            color: #ef4444;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+        }
+        
+        .corner-back-btn:hover {
+            background: #ef4444;
+            color: #ffffff;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+        
+        .applications-screen, .users-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 10000;
+            overflow-y: auto;
+            padding: 50px 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .applications-screen, .users-screen {
+                background: #000000;
+            }
+        }
+        
+        .applications-screen.active, .users-screen.active {
+            display: block;
+        }
+        
+        .app-buttons-container {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .app-type-btn {
+            padding: 20px 45px;
+            font-size: 1.3em;
+            font-weight: 600;
+            background: #f97316;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .app-type-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .app-type-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .app-type-btn:hover {
+            background: #ea580c;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
+        }
+        
+        .application-card {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            animation: cardSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+            transition: all 0.3s ease;
+        }
+        
+        .application-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .application-card {
+                background: #111111;
+                border-color: #333333;
+            }
+            
+            .application-card:hover {
+                box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+            }
+        }
+        
+        .application-card:nth-child(1) { animation-delay: 0.1s; }
+        .application-card:nth-child(2) { animation-delay: 0.2s; }
+        .application-card:nth-child(3) { animation-delay: 0.3s; }
+        .application-card:nth-child(4) { animation-delay: 0.4s; }
+        .application-card:nth-child(5) { animation-delay: 0.5s; }
+        
+        .application-card p {
+            margin: 12px 0;
+            font-size: 1em;
+            color: #666666;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .application-card p {
+                color: #999999;
+            }
+        }
+        
+        .application-card strong {
+            color: #f97316;
+        }
+        
+        .card-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .accept-btn, .decline-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .accept-btn::before, .decline-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .accept-btn:hover::before, .decline-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .accept-btn {
+            background: #22c55e;
+            color: #ffffff;
+        }
+        
+        .accept-btn:hover {
+            background: #16a34a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+        
+        .decline-btn {
+            background: #ef4444;
+            color: #ffffff;
+        }
+        
+        .decline-btn:hover {
+            background: #dc2626;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .device-card {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: center;
+            animation: cardPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+            transition: all 0.3s ease;
+        }
+        
+        .device-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .device-card {
+                background: #111111;
+                border-color: #333333;
+            }
+            
+            .device-card:hover {
+                box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+            }
+        }
+        
+        .device-card:nth-child(1) { animation-delay: 0.1s; }
+        .device-card:nth-child(2) { animation-delay: 0.2s; }
+        .device-card:nth-child(3) { animation-delay: 0.3s; }
+        .device-card:nth-child(4) { animation-delay: 0.4s; }
+        .device-card:nth-child(5) { animation-delay: 0.5s; }
+        
+        .device-card h3 {
+            color: #f97316;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .device-card p {
+            color: #666666;
+            margin: 10px 0;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .device-card p {
+                color: #999999;
+            }
+        }
+        
+        .device-card strong {
+            color: #f97316;
+        }
+        
+        .role-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .role-toggle-btn {
+            padding: 10px 28px;
+            background: transparent;
+            color: #666666;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .role-toggle-btn {
+                color: #999999;
+                border-color: #333333;
+            }
+        }
+        
+        .role-toggle-btn.selected {
+            background: #f97316;
+            color: #ffffff;
+            border-color: #f97316;
+            font-weight: 700;
+        }
+        
+        .role-toggle-btn:hover {
+            border-color: #f97316;
+            transform: scale(1.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0; 
+                transform: translateY(-30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from { transform: translateX(-80px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(80px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideUpFade {
+            from { transform: translateY(40px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 16ch; }
+        }
+        
+        @keyframes blink {
+            from, to { border-color: transparent; }
+            50% { border-color: currentColor; }
+        }
+        
+        @keyframes successPop {
+            0% { 
+                opacity: 0; 
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            10% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+            15% {
+                transform: translate(-50%, -50%) scale(0.95);
+            }
+            20% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            85% { 
+                opacity: 1; 
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% { 
+                opacity: 0; 
+                transform: translate(-50%, -45%) scale(0.8);
+            }
+        }
+        
+        @keyframes cardSlideIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes cardPopIn {
+            from { 
+                opacity: 0; 
+                transform: scale(0.8);
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="selection-screen" id="selectionScreen">
+        <h1>64kmc Submissions</h1>
+        <div class="button-container">
+            <button class="role-btn dev-btn" onclick="showForm('dev')">
+                <span>Dev</span>
+            </button>
+            <button class="role-btn helper-btn" onclick="showForm('helper')">
+                <span>Helper</span>
+            </button>
+        </div>
+        <div class="typing-text">play.64kmc.org</div>
+        <button class="admin-btn" id="adminBtnMain" onclick="showForm('admin')" style="display:none;">
+            <span>Admin GUI</span>
+        </button>
+    </div>
+    
+    <div class="admin-screen" id="adminScreen">
+        <h1>Admin Panel</h1>
+        <div class="admin-options">
+            <button class="admin-option-btn" onclick="showApplications()">
+                <span>See All Applications</span>
+            </button>
+            <button class="admin-option-btn" onclick="showUsers()">
+                <span>See All Users</span>
+            </button>
+        </div>
+        <button class="corner-back-btn" onclick="goBackFromAdmin()">← Back</button>
+    </div>
+    
+    <div class="applications-screen" id="applicationsScreen">
+        <h1 style="text-align:center; font-family:'Algerian',sans-serif;">Applications</h1>
+        <div class="app-buttons-container">
+            <button class="app-type-btn" onclick="showDevApplications()">Dev Applications</button>
+            <button class="app-type-btn" onclick="showHelperApplications()">Helper Applications</button>
+        </div>
+        <div id="applicationsContainer" style="margin-top:30px;"></div>
+        <button class="corner-back-btn" onclick="closeApplications()">← Back</button>
+    </div>
+    
+    <div class="users-screen" id="usersScreen">
+        <h1 style="text-align:center; font-family:'Algerian',sans-serif;">All Users</h1>
+        <div id="usersContainer" style="margin-top:30px;"></div>
+        <button class="corner-back-btn" onclick="closeUsers()">← Back</button>
+    </div>
+    
+    <div class="container" id="helperForm">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h1>Helper Application</h1>
+        <form id="helperSubmissionForm">
+            <div class="question">
+                <label for="h1">How old are you</label>
+                <input type="text" id="h1" name="h1" required>
+            </div>
+            
+            <div class="question">
+                <label for="h2">What will you bring to 64kmc smp</label>
+                <textarea id="h2" name="h2" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="h3">Do you have a premium account</label>
+                <select id="h3" name="h3" required>
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <label for="h4">Have you ever been staff on a server in the past? If so, what did you learn from that experience?</label>
+                <textarea id="h4" name="h4" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="h5">If a player is being toxic in chat but hasn't broken any specific rules, what would you do?</label>
+                <textarea id="h5" name="h5" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="h6">How would you deal with a player who is your friend but has clearly broken the rules?</label>
+                <textarea id="h6" name="h6" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="h7">Why do you want to join 64kmc?</label>
+                <textarea id="h7" name="h7" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="h8">What is your timezone & region</label>
+                <input type="text" id="h8" name="h8" required>
+            </div>
+            
+            <div class="question">
+                <label for="h9">Can you work well in a team?</label>
+                <select id="h9" name="h9" required>
+                    <option value="">Select an option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                    <option value="sometimes">Sometimes</option>
+                </select>
+            </div>
+            
+            <div class="question">
+                <label for="h10">What can you contribute to the server?</label>
+                <textarea id="h10" name="h10" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="h11">Any additional comments or information?</label>
+                <textarea id="h11" name="h11"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+    
+    <div class="container" id="devForm">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <h1>Developer Application</h1>
+        <form id="devSubmissionForm">
+            <div class="question">
+                <label for="d1">How old are you</label>
+                <input type="text" id="d1" name="d1" required>
+            </div>
+            
+            <div class="question">
+                <label for="d2">What programming languages do you know?</label>
+                <textarea id="d2" name="d2" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="d3">Do you have any previous experience?</label>
+                <select id="d3" name="d3" required onchange="toggleExperienceDetails()">
+                    <option value="">Select an option</option>
+                    <option value="no">No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+            
+            <div class="question" id="d4Container" style="display: none;">
+                <label for="d4">Can you provide any details about your previous experience?</label>
+                <textarea id="d4" name="d4"></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="d5">Why do you want to be a developer for 64kmc?</label>
+                <textarea id="d5" name="d5" required></textarea>
+            </div>
+            
+            <div class="question">
+                <label for="d6">What is your timezone & region</label>
+                <input type="text" id="d6" name="d6" required>
+            </div>
+            
+            <div class="question">
+                <label for="d7">How many hours per week can you dedicate to development?</label>
+                <input type="text" id="d7" name="d7" required>
+            </div>
+            
+            <div class="question">
+                <label for="d8">Any additional comments or information?</label>
+                <textarea id="d8" name="d8"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, set, get } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCav6gappQqHNfdD3wdi4gmJKkvCVZ_ZjY",
+            authDomain: "kmc-24e34.firebaseapp.com",
+            databaseURL: "https://kmc-24e34-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "kmc-24e34",
+            storageBucket: "kmc-24e34.firebasestorage.app",
+            messagingSenderId: "998484134773",
+            appId: "1:998484134773:web:b673314bd127343d4c213c",
+            measurementId: "G-E3274N8DKM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        function getDeviceType() {
+            const ua = navigator.userAgent;
+            if(/Mobi|Android/i.test(ua)) return "Phone";
+            if(/Tablet|iPad/i.test(ua)) return "Tablet";
+            return "PC";
+        }
+
+        function getDeviceName() {
+            const ua = navigator.userAgent;
+            
+            if (/iPhone/.test(ua)) {
+                const model = ua.match(/iPhone\s?(\d+[,\d]*)/);
+                return model ? `iPhone ${model[1].replace(',', '.')}` : "iPhone";
+            }
+            if (/iPad/.test(ua)) return "iPad";
+            
+            if (/Samsung/.test(ua) || /SM-/.test(ua) || /SAMSUNG/.test(ua)) {
+                const model = ua.match(/SM-([A-Z]\d+[A-Z]?)/i) || ua.match(/Galaxy\s([A-Z0-9\s]+)/i);
+                if (model) {
+                    const modelStr = model[1].trim();
+                    if (modelStr.match(/^[A-Z]\d+/)) {
+                        const letter = modelStr[0];
+                        const number = modelStr.match(/\d+/)[0].substring(0, 2);
+                        return `Samsung Galaxy ${letter}${number}`;
+                    }
+                    return `Samsung Galaxy ${modelStr}`;
+                }
+                return "Samsung";
+            }
+            
+            if (/Xiaomi/.test(ua) || /Mi\s/.test(ua) || /Redmi/.test(ua)) {
+                const model = ua.match(/(?:Xiaomi|Mi|Redmi)[\/\s]([A-Z0-9\s]+)/i);
+                return model ? `Xiaomi ${model[1].trim().split(/[\s;]/)[0]}` : "Xiaomi";
+            }
+            
+            if (/Huawei/.test(ua) || /HUAWEI/.test(ua)) {
+                const model = ua.match(/([A-Z]{3}-[A-Z0-9]+)/i);
+                return model ? `Huawei ${model[1]}` : "Huawei";
+            }
+            
+            if (/OnePlus/.test(ua)) {
+                const model = ua.match(/OnePlus([A-Z0-9\s]+)/i);
+                return model ? `OnePlus ${model[1].trim().split(/[\s;]/)[0]}` : "OnePlus";
+            }
+            
+            if (/Pixel/.test(ua)) {
+                const model = ua.match(/Pixel\s?(\d+[a-zA-Z\s]*)/i);
+                return model ? `Google Pixel ${model[1].trim()}` : "Google Pixel";
+            }
+            
+            if (/OPPO/.test(ua)) {
+                const model = ua.match(/OPPO\s([A-Z0-9]+)/i);
+                return model ? `OPPO ${model[1]}` : "OPPO";
+            }
+            
+            if (/vivo/.test(ua)) {
+                const model = ua.match(/vivo\s([A-Z0-9]+)/i);
+                return model ? `Vivo ${model[1]}` : "Vivo";
+            }
+            
+            if (/Android/.test(ua)) {
+                if (!/Mobile/.test(ua)) return "Android Tablet";
+                return "Android Phone";
+            }
+            
+            if (/Windows/.test(ua)) {
+                if (/Windows NT 10/.test(ua)) return "Windows 10/11 PC";
+                if (/Windows NT 6/.test(ua)) return "Windows PC";
+                return "Windows PC";
+            }
+            if (/Macintosh/.test(ua)) {
+                if (/Mac OS X/.test(ua)) return "MacBook";
+                return "Mac";
+            }
+            if (/CrOS/.test(ua)) return "Chromebook";
+            if (/Linux/.test(ua)) return "Linux PC";
+            
+            if (/Mobile/.test(ua)) return "Mobile Device";
+            
+            return "Unknown Device";
+        }
+
+        let deviceId = localStorage.getItem('64kmc_device_id');
+
+        if (!deviceId) {
+            deviceId = window.crypto && window.crypto.randomUUID ? window.crypto.randomUUID() : 'xxxx-xxxx-xxxx'.replace(/[x]/g, () => (Math.random() * 16 | 0).toString(16));
+            localStorage.setItem('64kmc_device_id', deviceId);
+        }
+
+        const deviceName = getDeviceName();
+        const deviceType = getDeviceType();
+        const deviceRef = ref(db, `devices/${deviceId}`);
+
+        get(deviceRef).then(snapshot => {
+            if (!snapshot.exists()) {
+                set(deviceRef, {
+                    name: deviceName,
+                    type: deviceType,
+                    role: "user"
+                });
+            }
+        });
+
+        const adminBtnMain = document.getElementById('adminBtnMain');
+        get(deviceRef).then(snapshot => {
+            if (snapshot.exists()) {
+                const deviceData = snapshot.val();
+                if (deviceData.role === "admin") {
+                    adminBtnMain.style.display = "block";
+                }
+            }
+        });
+
+        onValue(deviceRef, snapshot => {
+            const deviceData = snapshot.val();
+            if (deviceData && deviceData.role === "admin") {
+                adminBtnMain.style.display = "block";
+            } else {
+                adminBtnMain.style.display = "none";
+            }
+        });
+
+        window.toggleExperienceDetails = function() {
+            const select = document.getElementById('d3');
+            const container = document.getElementById('d4Container');
+            const textarea = document.getElementById('d4');
+            
+            if (select.value === 'yes') {
+                container.style.display = 'block';
+                textarea.setAttribute('required', 'required');
+            } else {
+                container.style.display = 'none';
+                textarea.removeAttribute('required');
+                textarea.value = '';
+            }
+        }
+
+        window.showForm = function(type) {
+            document.getElementById('selectionScreen').classList.add('hidden');
+            if (type === 'helper') {
+                document.getElementById('helperForm').classList.add('active');
+            } else if (type === 'dev') {
+                document.getElementById('devForm').classList.add('active');
+            } else if (type === 'admin') {
+                document.getElementById('adminScreen').classList.add('active');
+            }
+        }
+        
+        window.goBack = function() {
+            document.getElementById('helperForm').classList.remove('active');
+            document.getElementById('devForm').classList.remove('active');
+            document.getElementById('selectionScreen').classList.remove('hidden');
+        }
+        
+        window.goBackFromAdmin = function() {
+            document.getElementById('adminScreen').classList.remove('active');
+            document.getElementById('selectionScreen').classList.remove('hidden');
+        }
+
+        window.showApplications = function() {
+            document.getElementById('adminScreen').classList.remove('active');
+            document.getElementById('applicationsScreen').classList.add('active');
+        }
+
+        window.closeApplications = function() {
+            document.getElementById('applicationsScreen').classList.remove('active');
+            document.getElementById('adminScreen').classList.add('active');
+        }
+
+        window.showUsers = function() {
+            document.getElementById('adminScreen').classList.remove('active');
+            document.getElementById('usersScreen').classList.add('active');
+            loadUsers();
+        }
+
+        window.closeUsers = function() {
+            document.getElementById('usersScreen').classList.remove('active');
+            document.getElementById('adminScreen').classList.add('active');
+        }
+
+        window.showDevApplications = function() {
+            const container = document.getElementById('applicationsContainer');
+            container.innerHTML = '';
+            
+            onValue(ref(db, 'applications/dev'), snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    for (let key in data) {
+                        const app = data[key];
+                        const card = document.createElement('div');
+                        card.className = 'application-card';
+                        card.innerHTML = `
+                            <p><strong>Age:</strong> ${app.age || 'N/A'}</p>
+                            <p><strong>Programming Languages:</strong> ${app.languages || 'N/A'}</p>
+                            <p><strong>Previous Experience:</strong> ${app.prevExp || 'N/A'}</p>
+                            ${app.expDetails ? `<p><strong>Experience Details:</strong> ${app.expDetails}</p>` : ''}
+                            <p><strong>Why 64kmc:</strong> ${app.whyJoin || 'N/A'}</p>
+                            <p><strong>Timezone:</strong> ${app.timezone || 'N/A'}</p>
+                            <p><strong>Hours/Week:</strong> ${app.hours || 'N/A'}</p>
+                            <p><strong>Additional Comments:</strong> ${app.comments || 'N/A'}</p>
+                            <div class="card-buttons">
+                                <button class="accept-btn" onclick="acceptApplication('dev', '${key}')">Accept</button>
+                                <button class="decline-btn" onclick="declineApplication('dev', '${key}')">Decline</button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    }
+                } else {
+                    container.innerHTML = '<p style="text-align:center; font-size:1.5em; color:#666;">No dev applications yet</p>';
+                }
+            }, { onlyOnce: true });
+        }
+
+        window.showHelperApplications = function() {
+            const container = document.getElementById('applicationsContainer');
+            container.innerHTML = '';
+            
+            onValue(ref(db, 'applications/helper'), snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    for (let key in data) {
+                        const app = data[key];
+                        const card = document.createElement('div');
+                        card.className = 'application-card';
+                        card.innerHTML = `
+                            <p><strong>Age:</strong> ${app.age || 'N/A'}</p>
+                            <p><strong>What They Bring:</strong> ${app.whatBring || 'N/A'}</p>
+                            <p><strong>Premium Account:</strong> ${app.premium || 'N/A'}</p>
+                            <p><strong>Past Staff Experience:</strong> ${app.staffExp || 'N/A'}</p>
+                            <p><strong>Toxic Player Handling:</strong> ${app.toxicHandling || 'N/A'}</p>
+                            <p><strong>Friend Rule Breaking:</strong> ${app.friendRule || 'N/A'}</p>
+                            <p><strong>Why Join:</strong> ${app.whyJoin || 'N/A'}</p>
+                            <p><strong>Timezone:</strong> ${app.timezone || 'N/A'}</p>
+                            <p><strong>Teamwork:</strong> ${app.teamwork || 'N/A'}</p>
+                            <p><strong>Contribution:</strong> ${app.contribution || 'N/A'}</p>
+                            <p><strong>Additional Comments:</strong> ${app.comments || 'N/A'}</p>
+                            <div class="card-buttons">
+                                <button class="accept-btn" onclick="acceptApplication('helper', '${key}')">Accept</button>
+                                <button class="decline-btn" onclick="declineApplication('helper', '${key}')">Decline</button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    }
+                } else {
+                    container.innerHTML = '<p style="text-align:center; font-size:1.5em; color:#666;">No helper applications yet</p>';
+                }
+            }, { onlyOnce: true });
+        }
+
+        window.acceptApplication = function(type, key) {
+            remove(ref(db, `applications/${type}/${key}`));
+            showSuccessMessage(`Application accepted!`);
+            setTimeout(() => {
+                if(type === 'dev') showDevApplications();
+                else showHelperApplications();
+            }, 1000);
+        }
+
+        window.declineApplication = function(type, key) {
+            remove(ref(db, `applications/${type}/${key}`));
+            showSuccessMessage(`Application declined!`);
+            setTimeout(() => {
+                if(type === 'dev') showDevApplications();
+                else showHelperApplications();
+            }, 1000);
+        }
+
+        function loadUsers() {
+            const container = document.getElementById('usersContainer');
+            container.innerHTML = '';
+
+            onValue(ref(db, 'devices'), snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    for (let key in data) {
+                        const device = data[key];
+                        const card = document.createElement('div');
+                        card.className = 'device-card';
+                        card.innerHTML = `
+                            <h3>${device.name || 'Unknown Device'}</h3>
+                            <p><strong>Type:</strong> ${device.type || 'Unknown'}</p>
+                            <div class="role-buttons">
+                                <button class="role-toggle-btn ${device.role === 'user' ? 'selected' : ''}" onclick="setRole('${key}', 'user')">User</button>
+                                <button class="role-toggle-btn ${device.role === 'admin' ? 'selected' : ''}" onclick="setRole('${key}', 'admin')">Admin</button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    }
+                } else {
+                    container.innerHTML = '<p style="text-align:center; font-size:1.5em; color:#666;">No users found</p>';
+                }
+            }, { onlyOnce: true });
+        }
+
+        window.setRole = function(deviceKey, role) {
+            const buttons = document.querySelectorAll(`[onclick*="setRole('${deviceKey}'"]`);
+            buttons.forEach(btn => {
+                if (btn.textContent.trim().toLowerCase() === role.toLowerCase()) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+            
+            set(ref(db, `devices/${deviceKey}/role`), role);
+            showSuccessMessage(`Role updated to ${role}!`);
+        }
+
+        function showSuccessMessage(message) {
+            const msg = document.createElement('div');
+            msg.className = 'success-message';
+            msg.innerHTML = `✓ ${message}`;
+            document.body.appendChild(msg);
+            
+            setTimeout(() => {
+                msg.remove();
+            }, 3000);
+        }
+        
+        document.getElementById('helperSubmissionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const inputs = this.querySelectorAll('[required]');
+            let allFilled = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allFilled = false;
+                }
+            });
+            
+            if (allFilled) {
+                const applicationData = {
+                    age: document.getElementById('h1').value,
+                    whatBring: document.getElementById('h2').value,
+                    premium: document.getElementById('h3').value,
+                    staffExp: document.getElementById('h4').value,
+                    toxicHandling: document.getElementById('h5').value,
+                    friendRule: document.getElementById('h6').value,
+                    whyJoin: document.getElementById('h7').value,
+                    timezone: document.getElementById('h8').value,
+                    teamwork: document.getElementById('h9').value,
+                    contribution: document.getElementById('h10').value,
+                    comments: document.getElementById('h11').value,
+                    timestamp: Date.now()
+                };
+
+                push(ref(db, 'applications/helper'), applicationData);
+                showSuccessMessage('You successfully applied for Helper!');
+                this.reset();
+                setTimeout(() => goBack(), 3000);
+            } else {
+                alert('Please fill out all required fields!');
+            }
+        });
+        
+        document.getElementById('devSubmissionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const inputs = this.querySelectorAll('[required]');
+            let allFilled = true;
+            
+            inputs.forEach(input => {
+                if (!input.value.trim()) {
+                    allFilled = false;
+                }
+            });
+            
+            if (allFilled) {
+                const applicationData = {
+                    age: document.getElementById('d1').value,
+                    languages: document.getElementById('d2').value,
+                    prevExp: document.getElementById('d3').value,
+                    expDetails: document.getElementById('d4').value,
+                    whyJoin: document.getElementById('d5').value,
+                    timezone: document.getElementById('d6').value,
+                    hours: document.getElementById('d7').value,
+                    comments: document.getElementById('d8').value,
+                    timestamp: Date.now()
+                };
+
+                push(ref(db, 'applications/dev'), applicationData);
+                showSuccessMessage('You successfully applied for Developer!');
+                this.reset();
+                document.getElementById('d4Container').style.display = 'none';
+                setTimeout(() => goBack(), 3000);
+            } else {
+                alert('Please fill out all required fields!');
+            }
+        });
+    </script>
+</body>
+</html>
